@@ -1,47 +1,22 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"os"
 	"sort"
-	"strconv"
 	"strings"
+
+	"github.com/staffbase-robert/aoc2024/utils"
 )
 
-func handleError(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
-func mustLen[T any](l []T, want int) {
-	if len(l) != want {
-		panic(fmt.Sprintf("unexpected length of list, want %d, got %d\nitems:\n%v", want, len(l), l))
-	}
-}
-
-func mustInt(s string) int {
-	if i, err := strconv.Atoi(s); err != nil {
-		panic(err)
-	} else {
-		return i
-	}
-}
-
-func abs(i int) int {
-	if i < 0 {
-		return -i
-	}
-	return i
-}
-
-func day1() {
+func solve() {
 	file, err := os.Open("./input_d1")
-	handleError(err)
+	utils.HandleError(err)
 
 	bytes, err := io.ReadAll(file)
-	handleError(err)
+	utils.HandleError(err)
 
 	input := string(bytes)
 	lines := strings.Split(input, "\n")
@@ -50,9 +25,9 @@ func day1() {
 	l2 := make([]int, 0)
 	for _, line := range lines {
 		items := strings.Fields(line)
-		mustLen(items, 2)
-		l1 = append(l1, mustInt(items[0]))
-		l2 = append(l2, mustInt(items[1]))
+		utils.MustLen(items, 2)
+		l1 = append(l1, utils.MustInt(items[0]))
+		l2 = append(l2, utils.MustInt(items[1]))
 	}
 
 	sort.Ints(l1)
@@ -60,17 +35,17 @@ func day1() {
 	totalDist := 0
 	for i, left := range l1 {
 		right := l2[i]
-		totalDist += abs(right - left)
+		totalDist += utils.Abs(right - left)
 	}
 	fmt.Println("result", totalDist)
 }
 
-func day1b() {
+func solveB() {
 	file, err := os.Open("./input_d1")
-	handleError(err)
+	utils.HandleError(err)
 
 	bytes, err := io.ReadAll(file)
-	handleError(err)
+	utils.HandleError(err)
 
 	input := string(bytes)
 	lines := strings.Split(input, "\n")
@@ -79,9 +54,9 @@ func day1b() {
 	l2 := make([]int, 0)
 	for _, line := range lines {
 		items := strings.Fields(line)
-		mustLen(items, 2)
-		l1 = append(l1, mustInt(items[0]))
-		l2 = append(l2, mustInt(items[1]))
+		utils.MustLen(items, 2)
+		l1 = append(l1, utils.MustInt(items[0]))
+		l2 = append(l2, utils.MustInt(items[1]))
 	}
 
 	freq := make(map[int]int)
@@ -100,4 +75,15 @@ func day1b() {
 		score += v * f
 	}
 	fmt.Println(score)
+}
+
+var isPartTwo = flag.Bool("b", false, "select if part two")
+
+func main() {
+	flag.Parse()
+	if *isPartTwo {
+		solveB()
+	} else {
+		solve()
+	}
 }
