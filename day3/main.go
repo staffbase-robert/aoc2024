@@ -58,7 +58,7 @@ func (p *parser) takeInt() (int, bool) {
 	return utils.MustInt(ret), true
 }
 
-func Parse(raw string) []mult {
+func parse(raw string) []mult {
 	p := &parser{raw}
 
 	insts := make([]mult, 0)
@@ -114,30 +114,31 @@ func Parse(raw string) []mult {
 	return insts
 }
 
+var isPartTwo = flag.Bool("b", false, "select if part two")
+var inputFile = flag.String("input", "day3/input", "select input file")
+
+func main() {
+	flag.Parse()
+	solve()
+}
+
 func handleInput() string {
-	file, err := os.Open("./input_d3")
+	file, err := os.Open(*inputFile)
 	utils.HandleError(err)
 	bytes, err := io.ReadAll(file)
 	utils.HandleError(err)
 	return string(bytes)
 }
 
-func solve(isPartTwo bool) {
-	mults := Parse(handleInput())
+func solve() {
+	mults := parse(handleInput())
 	score := 0
 	for _, mult := range mults {
 		add := mult.a * mult.b
-		if isPartTwo && !mult.enabled {
+		if *isPartTwo && !mult.enabled {
 			add = 0
 		}
 		score += add
 	}
 	fmt.Println(score)
-}
-
-var isPartTwo = flag.Bool("b", false, "select if part two")
-
-func main() {
-	flag.Parse()
-	solve(*isPartTwo)
 }
