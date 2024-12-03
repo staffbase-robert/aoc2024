@@ -1,2 +1,2 @@
 day:
-	cp -r template_day day_$(shell date +'%d')
+	cp -r template_day day$(shell date +'%d')
