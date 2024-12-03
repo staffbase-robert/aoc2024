@@ -1,2 +1,4 @@
+.PHONY: template
+
 day:
-	cp -r template_day day$(shell date +'%d')
+	cp -r template day$(shell date +'%d')
