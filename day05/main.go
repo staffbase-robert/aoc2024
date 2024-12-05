@@ -86,22 +86,54 @@ func handleInput() {
 func solve() {
 	handleInput()
 
+	if !*isPartTwo {
+		score := 0
+		for _, seq := range sequences {
+			valid := true
+			for _, rule := range rules {
+				if err := rule.apply(seq); err != nil {
+					fmt.Println(seq, err)
+					valid = false
+					break
+				}
+
+			}
+			if valid {
+				mid := seq[len(seq)/2]
+				score += mid
+			}
+		}
+		fmt.Println(score)
+	}
+
 	score := 0
 	for _, seq := range sequences {
-		valid := true
+		invalid := false
 		for _, rule := range rules {
 			if err := rule.apply(seq); err != nil {
-				fmt.Println(seq, err)
-				valid = false
+				invalid = true
 				break
 			}
-
 		}
-		if valid {
+
+		if invalid {
+			isFixed := false
+			fixed := seq
+			for !isFixed {
+				isFixed = true
+				for _, r := range rules {
+					if err := r.apply(fixed); err != nil {
+						isFixed = false
+						i := slices.IndexFunc(fixed, func(s int) bool { return s == r.lhs })
+						j := slices.IndexFunc(fixed, func(s int) bool { return s == r.rhs })
+						fixed[i], fixed[j] = fixed[j], fixed[i]
+						break
+					}
+				}
+			}
 			mid := seq[len(seq)/2]
 			score += mid
 		}
 	}
-
 	fmt.Println(score)
 }
