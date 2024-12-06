@@ -31,6 +31,24 @@ func MustEq(a, b any) {
 	}
 }
 
+func MustNil(v any) {
+	if v != nil {
+		panic(fmt.Sprintf("not nil: %v", v))
+	}
+}
+
+func MustFalse(v bool) {
+	if v {
+		panic("got true")
+	}
+}
+
+func MustTrue(v bool) {
+	if !v {
+		panic("got false")
+	}
+}
+
 func Take[T any](s []T, index int) (T, []T) {
 	if index > len(s)-1 {
 		panic(fmt.Sprintf("error in Take: index out of bounds, access %d which is greater than length of %d", index, len(s)))

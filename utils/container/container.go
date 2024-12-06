@@ -15,6 +15,10 @@ type Container struct {
 	Lines []string
 }
 
+func New(lines []string) Container {
+	return Container{lines}
+}
+
 func NewPadded(lines []string) Container {
 	tb := strings.Repeat("#", len(lines[0])+2)
 
@@ -51,4 +55,33 @@ func (c Container) At(p Point) (string, error) {
 		return "", ErrOutOfBounds
 	}
 	return c.Lines[y][x : x+1], nil
+}
+
+func (c Container) Set(p Point, r string) error {
+	if _, err := c.At(p); err != nil {
+		return err
+	}
+
+	l := c.Lines[p.Y]
+	c.Lines[p.Y] = l[:p.X] + r + l[p.X+1:]
+	return nil
+}
+
+func (c Container) FindFirst(s string) (Point, error) {
+	for y := 0; y < len(c.Lines); y++ {
+		for x := 0; x < len(c.Lines[0]); x++ {
+			if c.Lines[y][x:x+1] == s {
+				return Point{X: x, Y: y}, nil
+			}
+		}
+	}
+	return Point{}, fmt.Errorf("not found")
+}
+
+func (c Container) Copy() Container {
+	nl := make([]string, len(c.Lines))
+	copy(nl, c.Lines)
+	return Container{
+		Lines: nl,
+	}
 }
