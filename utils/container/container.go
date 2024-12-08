@@ -1,4 +1,4 @@
-package stringcontainer2d
+package container
 
 import (
 	"errors"
@@ -9,6 +9,24 @@ import (
 type Point struct {
 	X int
 	Y int
+}
+
+func (p Point) Add(other Point) Point {
+	return Point{
+		X: p.X + other.X,
+		Y: p.Y + other.Y,
+	}
+}
+
+func (p Point) Neg() Point {
+	return Point{
+		X: -p.X,
+		Y: -p.Y,
+	}
+}
+
+func (p Point) Sub(other Point) Point {
+	return p.Add(other.Neg())
 }
 
 type Container struct {

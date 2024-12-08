@@ -9,7 +9,7 @@ func New[T comparable]() Set[T] {
 func (s Set[T]) Add(item ...T) {
 	for _, it := range item {
 		if _, exists := s[it]; exists {
-			return
+			continue
 		}
 		s[it] = struct{}{}
 	}
