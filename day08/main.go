@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"iter"
 	"os"
 	"strings"
 
@@ -23,14 +24,13 @@ func solve() {
 	for _, points := range antennas {
 		pairs := makePairs(points)
 		for _, pair := range pairs {
-			lIter, rIter := pair.antinodes()
-			a := lIter()
-			b := rIter()
-			if _, err := con.At(a); err == nil {
-				antinodes.Add(a)
-			}
-			if _, err := con.At(b); err == nil {
-				antinodes.Add(b)
+			for _, forward := range []bool{true, false} {
+				next, stop := iter.Pull(pair.shoot(forward))
+				p, _ := next()
+				if _, err := con.At(p); err == nil {
+					antinodes.Add(p)
+				}
+				stop()
 			}
 		}
 	}
@@ -42,21 +42,17 @@ func solve() {
 		utils.MustTrue(len(pairs) > 0)
 		for _, pa := range pairs {
 			antinodes.Add(pa.a, pa.b)
-			lIter, rIter := pa.antinodes()
-			for {
-				p := lIter()
-				if _, err := con.At(p); err != nil {
-					break
+			for _, forward := range []bool{true, false} {
+				next, stop := iter.Pull(pa.shoot(forward))
+				for {
+					p, _ := next()
+					if _, err := con.At(p); err != nil {
+						stop()
+						break
+					}
+					antinodes.Add(p)
 				}
-				antinodes.Add(c.Point{X: p.X, Y: p.Y})
-			}
 
-			for {
-				p := rIter()
-				if _, err := con.At(p); err != nil {
-					break
-				}
-				antinodes.Add(c.Point{X: p.X, Y: p.Y})
 			}
 		}
 	}
@@ -112,22 +108,19 @@ func makePairs(points []c.Point) []pair {
 	return ret
 }
 
-type iterator func() c.Point
-
-func (p pair) antinodes() (lhs iterator, rhs iterator) {
-	vecA2B := p.b.Sub(p.a)
-	curB := p.b
-	lhs = func() c.Point {
-		curB = curB.Add(vecA2B)
-		return curB
+func (p pair) shoot(forward bool) iter.Seq[c.Point] {
+	return func(yield func(c.Point) bool) {
+		cur := p.a
+		vec := p.a.Sub(p.b)
+		if !forward {
+			cur = p.b
+			vec = p.b.Sub(p.a)
+		}
+		for {
+			cur = cur.Add(vec)
+			if !yield(cur) {
+				return
+			}
+		}
 	}
-
-	vecB2A := p.a.Sub(p.b)
-	curA := p.a
-	rhs = func() c.Point {
-		curA = curA.Add(vecB2A)
-		return curA
-	}
-
-	return
 }

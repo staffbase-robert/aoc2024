@@ -29,6 +29,13 @@ func (p Point) Sub(other Point) Point {
 	return p.Add(other.Neg())
 }
 
+func (p Point) MulScal(s int) Point {
+	return Point{
+		p.X * s,
+		p.Y * s,
+	}
+}
+
 type Container struct {
 	Lines []string
 }
