@@ -75,6 +75,18 @@ func (c Container[T]) FindFirst(s T) (point.Point, error) {
 	return point.Point{}, fmt.Errorf("not found")
 }
 
+func (c Container[T]) FindAll(s T) []point.Point {
+	var ret []point.Point
+	for y := 0; y < len(c.Rows); y++ {
+		for x := 0; x < len(c.Rows[0]); x++ {
+			if c.Rows[y][x] == s {
+				ret = append(ret, point.Point{X: x, Y: y})
+			}
+		}
+	}
+	return ret
+}
+
 func (c Container[T]) Copy() Container[T] {
 	ret := make([][]T, 0)
 	for _, row := range c.Rows {
