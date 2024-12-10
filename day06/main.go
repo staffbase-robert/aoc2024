@@ -8,7 +8,8 @@ import (
 	"strings"
 
 	"github.com/staffbase-robert/aoc2024/utils"
-	c "github.com/staffbase-robert/aoc2024/utils/container"
+	c "github.com/staffbase-robert/aoc2024/utils/container/string"
+	"github.com/staffbase-robert/aoc2024/utils/point"
 	"github.com/staffbase-robert/aoc2024/utils/set"
 )
 
@@ -30,7 +31,7 @@ func handleInput() []string {
 	return strings.Split(input, "\n")
 }
 
-type directionFn func(c.Point) c.Point
+type directionFn func(point.Point) point.Point
 
 type direction string
 
@@ -42,10 +43,10 @@ var (
 )
 
 var dirToFn = map[direction]directionFn{
-	up:    func(s c.Point) c.Point { return c.Point{X: s.X, Y: s.Y - 1} },
-	down:  func(s c.Point) c.Point { return c.Point{X: s.X, Y: s.Y + 1} },
-	left:  func(s c.Point) c.Point { return c.Point{X: s.X - 1, Y: s.Y} },
-	right: func(s c.Point) c.Point { return c.Point{X: s.X + 1, Y: s.Y} },
+	up:    func(s point.Point) point.Point { return point.Point{X: s.X, Y: s.Y - 1} },
+	down:  func(s point.Point) point.Point { return point.Point{X: s.X, Y: s.Y + 1} },
+	left:  func(s point.Point) point.Point { return point.Point{X: s.X - 1, Y: s.Y} },
+	right: func(s point.Point) point.Point { return point.Point{X: s.X + 1, Y: s.Y} },
 }
 
 func transition(d direction) direction {
@@ -65,22 +66,22 @@ func transition(d direction) direction {
 }
 
 type pointWithDir struct {
-	c.Point
+	point.Point
 	dir direction
 }
 
 type guard struct {
-	pos        c.Point
+	pos        point.Point
 	dir        direction
-	path       set.Set[c.Point]
+	path       set.Set[point.Point]
 	beenBefore set.Set[pointWithDir]
 }
 
-func newGuard(pos c.Point, dir direction) guard {
+func newGuard(pos point.Point, dir direction) guard {
 	return guard{
 		pos:        pos,
 		dir:        dir,
-		path:       set.New[c.Point](),
+		path:       set.New[point.Point](),
 		beenBefore: set.New[pointWithDir](),
 	}
 }
@@ -109,7 +110,7 @@ func (g guard) traverse(con c.Container) (isLoop bool) {
 	}
 }
 
-func mutateContainer(con c.Container, pos c.Point) (c.Container, error) {
+func mutateContainer(con c.Container, pos point.Point) (c.Container, error) {
 	nc := con.Copy()
 	if err := nc.Set(pos, "#"); err != nil {
 		return c.Container{}, err
@@ -125,7 +126,7 @@ func solve() {
 	utils.MustFalse(g.traverse(con))
 	fmt.Println("part1", g.path.Len())
 
-	withLoops := set.New[c.Point]()
+	withLoops := set.New[point.Point]()
 	for _, obstacle := range g.path.Items() {
 		if obstacle == p {
 			continue

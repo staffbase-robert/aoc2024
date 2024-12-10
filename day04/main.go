@@ -8,7 +8,8 @@ import (
 	"strings"
 
 	"github.com/staffbase-robert/aoc2024/utils"
-	c "github.com/staffbase-robert/aoc2024/utils/container"
+	c "github.com/staffbase-robert/aoc2024/utils/container/string"
+	"github.com/staffbase-robert/aoc2024/utils/point"
 )
 
 var isPartTwo = flag.Bool("b", true, "select if part two")
@@ -37,8 +38,8 @@ func handleInput() []string {
 func solve() {
 	con := c.NewPadded(handleInput())
 
-	points := []c.Point{{0, 0}}
-	cur := c.Point{0, 0}
+	points := []point.Point{{X: 0, Y: 0}}
+	cur := point.Point{X: 0, Y: 0}
 	s := 0
 	for {
 		scan := boundScanner[s]
@@ -87,28 +88,28 @@ func solve() {
 	fmt.Println(score)
 }
 
-type scanner func(p c.Point) c.Point
+type scanner func(p point.Point) point.Point
 
 var scanners = []scanner{
-	scanner(func(p c.Point) c.Point { return c.Point{p.X + 1, p.Y} }),
-	scanner(func(p c.Point) c.Point { return c.Point{p.X - 1, p.Y} }),
+	scanner(func(p point.Point) point.Point { return point.Point{X: p.X + 1, Y: p.Y} }),
+	scanner(func(p point.Point) point.Point { return point.Point{X: p.X - 1, Y: p.Y} }),
 
-	scanner(func(p c.Point) c.Point { return c.Point{p.X, p.Y + 1} }),
-	scanner(func(p c.Point) c.Point { return c.Point{p.X, p.Y - 1} }),
+	scanner(func(p point.Point) point.Point { return point.Point{X: p.X, Y: p.Y + 1} }),
+	scanner(func(p point.Point) point.Point { return point.Point{X: p.X, Y: p.Y - 1} }),
 
-	scanner(func(p c.Point) c.Point { return c.Point{p.X + 1, p.Y + 1} }),
-	scanner(func(p c.Point) c.Point { return c.Point{p.X + 1, p.Y - 1} }),
+	scanner(func(p point.Point) point.Point { return point.Point{X: p.X + 1, Y: p.Y + 1} }),
+	scanner(func(p point.Point) point.Point { return point.Point{X: p.X + 1, Y: p.Y - 1} }),
 
-	scanner(func(p c.Point) c.Point { return c.Point{p.X - 1, p.Y + 1} }),
-	scanner(func(p c.Point) c.Point { return c.Point{p.X - 1, p.Y - 1} }),
+	scanner(func(p point.Point) point.Point { return point.Point{X: p.X - 1, Y: p.Y + 1} }),
+	scanner(func(p point.Point) point.Point { return point.Point{X: p.X - 1, Y: p.Y - 1} }),
 }
 
 // down right up left
 var boundScanner = []scanner{
-	scanner(func(p c.Point) c.Point { return c.Point{p.X, p.Y + 1} }),
-	scanner(func(p c.Point) c.Point { return c.Point{p.X + 1, p.Y} }),
-	scanner(func(p c.Point) c.Point { return c.Point{p.X, p.Y - 1} }),
-	scanner(func(p c.Point) c.Point { return c.Point{p.X - 1, p.Y} }),
+	scanner(func(p point.Point) point.Point { return point.Point{X: p.X, Y: p.Y + 1} }),
+	scanner(func(p point.Point) point.Point { return point.Point{X: p.X + 1, Y: p.Y} }),
+	scanner(func(p point.Point) point.Point { return point.Point{X: p.X, Y: p.Y - 1} }),
+	scanner(func(p point.Point) point.Point { return point.Point{X: p.X - 1, Y: p.Y} }),
 }
 
 func solveB() {
@@ -146,7 +147,7 @@ func (s stencil) conv(con c.Container, x, y int) (sum int) {
 		for j := 0; j < 3; j++ {
 			v := 0
 			sP := s[j][i : i+1]
-			if cP, err := con.At(c.Point{X: x + i, Y: y + j}); err == nil {
+			if cP, err := con.At(point.Point{X: x + i, Y: y + j}); err == nil {
 				if sP == cP {
 					v = 1
 				}

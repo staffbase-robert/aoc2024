@@ -9,18 +9,19 @@ import (
 	"strings"
 
 	"github.com/staffbase-robert/aoc2024/utils"
-	c "github.com/staffbase-robert/aoc2024/utils/container"
+	c "github.com/staffbase-robert/aoc2024/utils/container/string"
+	"github.com/staffbase-robert/aoc2024/utils/point"
 	"github.com/staffbase-robert/aoc2024/utils/set"
 )
 
 var inputFile = flag.String("input", "example", "select input file")
 
 var con c.Container
-var antennas = make(map[string][]c.Point)
+var antennas = make(map[string][]point.Point)
 
 func solve() {
 	handleInput()
-	antinodes := set.New[c.Point]()
+	antinodes := set.New[point.Point]()
 	for _, points := range antennas {
 		pairs := makePairs(points)
 		for _, pair := range pairs {
@@ -36,7 +37,7 @@ func solve() {
 	}
 	fmt.Println("part1", len(antinodes))
 
-	antinodes = set.New[c.Point]()
+	antinodes = set.New[point.Point]()
 	for _, points := range antennas {
 		pairs := makePairs(points)
 		utils.MustTrue(len(pairs) > 0)
@@ -83,22 +84,22 @@ func handleInput() {
 				continue
 			}
 			if _, exists := antennas[s]; !exists {
-				antennas[s] = make([]c.Point, 0)
+				antennas[s] = make([]point.Point, 0)
 			}
 
 			sl := antennas[s]
-			sl = append(sl, c.Point{X: x, Y: y})
+			sl = append(sl, point.Point{X: x, Y: y})
 			antennas[s] = sl
 		}
 	}
 }
 
 type pair struct {
-	a c.Point
-	b c.Point
+	a point.Point
+	b point.Point
 }
 
-func makePairs(points []c.Point) []pair {
+func makePairs(points []point.Point) []pair {
 	ret := make([]pair, 0)
 	for i := 0; i < len(points)-1; i++ {
 		for j := i + 1; j < len(points); j++ {
@@ -108,8 +109,8 @@ func makePairs(points []c.Point) []pair {
 	return ret
 }
 
-func (p pair) shoot(forward bool) iter.Seq[c.Point] {
-	return func(yield func(c.Point) bool) {
+func (p pair) shoot(forward bool) iter.Seq[point.Point] {
+	return func(yield func(point.Point) bool) {
 		cur := p.a
 		vec := p.a.Sub(p.b)
 		if !forward {

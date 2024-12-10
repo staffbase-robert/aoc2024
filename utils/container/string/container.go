@@ -4,37 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+
+	"github.com/staffbase-robert/aoc2024/utils/point"
 )
-
-type Point struct {
-	X int
-	Y int
-}
-
-func (p Point) Add(other Point) Point {
-	return Point{
-		X: p.X + other.X,
-		Y: p.Y + other.Y,
-	}
-}
-
-func (p Point) Neg() Point {
-	return Point{
-		X: -p.X,
-		Y: -p.Y,
-	}
-}
-
-func (p Point) Sub(other Point) Point {
-	return p.Add(other.Neg())
-}
-
-func (p Point) MulScal(s int) Point {
-	return Point{
-		p.X * s,
-		p.Y * s,
-	}
-}
 
 type Container struct {
 	Lines []string
@@ -64,7 +36,7 @@ func (c Container) Print() {
 
 var ErrOutOfBounds = errors.New("out of bounds")
 
-func (c Container) At(p Point) (string, error) {
+func (c Container) At(p point.Point) (string, error) {
 	x := p.X
 	y := p.Y
 	if x < 0 {
@@ -82,7 +54,7 @@ func (c Container) At(p Point) (string, error) {
 	return c.Lines[y][x : x+1], nil
 }
 
-func (c Container) Set(p Point, r string) error {
+func (c Container) Set(p point.Point, r string) error {
 	if _, err := c.At(p); err != nil {
 		return err
 	}
@@ -92,15 +64,15 @@ func (c Container) Set(p Point, r string) error {
 	return nil
 }
 
-func (c Container) FindFirst(s string) (Point, error) {
+func (c Container) FindFirst(s string) (point.Point, error) {
 	for y := 0; y < len(c.Lines); y++ {
 		for x := 0; x < len(c.Lines[0]); x++ {
 			if c.Lines[y][x:x+1] == s {
-				return Point{X: x, Y: y}, nil
+				return point.Point{X: x, Y: y}, nil
 			}
 		}
 	}
-	return Point{}, fmt.Errorf("not found")
+	return point.Point{}, fmt.Errorf("not found")
 }
 
 func (c Container) Copy() Container {
